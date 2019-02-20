@@ -17,6 +17,15 @@ function reportUseOutsideOfComparison(context, node) {
   }
 }
 
+function isReactHook(node) {
+  return (
+    node.parent.type === 'CallExpression' &&
+    node.parent.callee &&
+    node.parent.callee.name &&
+    node.parent.callee.name.startsWith('use')
+  );
+}
+
 const endsWithReturnStatement = _.flow(
   _.last,
   _.matches({type: 'ReturnStatement'})
@@ -62,7 +71,11 @@ const create = function (context) {
         });
       }
     },
-    ArrowFunctionExpression: reportFunc,
+    ArrowFunctionExpression(node) {
+      if (!isReactHook(node)) {
+        reportFunc(node);
+      }
+    },
     FunctionDeclaration: reportFunc,
     FunctionExpression: reportFunc
   };

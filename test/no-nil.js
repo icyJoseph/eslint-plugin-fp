@@ -38,7 +38,8 @@ ruleTester.run('no-nil', rule, {
     'a !== undefined',
     'function foo() { return 1; }',
     'function foo(a=1) { return 1; }',
-    'const foo = () => 1;'
+    'const foo = () => 1;',
+    'useHook(() => {});'
   ],
   invalid: [
     {
@@ -131,6 +132,10 @@ ruleTester.run('no-nil', rule, {
     },
     {
       code: 'function foo() {}',
+      errors: [functionReturnError]
+    },
+    {
+      code: 'hook(()=> {})',
       errors: [functionReturnError]
     },
     {
